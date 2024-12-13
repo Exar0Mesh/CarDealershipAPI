@@ -394,6 +394,24 @@ public class JdbcVehicleDao implements VehicleDao{
 
     @Override
     public boolean delete(int vin) {
-        return false;
+        String sql = "DELETE FROM vehicles WHERE VIN=?";
+
+        try (Connection connection = dataSource.getConnection()) {
+            PreparedStatement statement = connection.prepareStatement(sql);
+
+            statement.setInt(1, vin);
+
+            int rowsAffected = statement.executeUpdate();
+
+            if (rowsAffected == 0) {
+                System.out.println("No vehicle found with: " + vin);
+                return false;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        return true;
     }
 }
